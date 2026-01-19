@@ -138,4 +138,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "https://stock-flow-front-end.vercel.app/",
+    "https://stock-flow-front-end-git-main-vicente-aznars-projects.vercel.app/",
+    "https://stock-flow-front-71my0fyaf-vicente-aznars-projects.vercel.app/"
 ]
