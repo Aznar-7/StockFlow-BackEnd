@@ -11,6 +11,8 @@ class Product(models.Model):
     stock = models.IntegerField(default=0)
     min_stock = models.IntegerField(default=0)
     location = models.CharField(max_length=60, blank=True)
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

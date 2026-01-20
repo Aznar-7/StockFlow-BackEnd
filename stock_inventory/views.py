@@ -1,6 +1,7 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404
 from django.db import transaction
@@ -11,6 +12,7 @@ from .serializers import (
     StockMovementSerializer,
     StockMovementReadSerializer,
 )
+
 
 
 @api_view(["GET", "POST"])
@@ -112,4 +114,27 @@ def product_reactivate(request, pk):
     product.is_active = True
     product.save()
     return Response(ProductSerializer(product).data)
+
+
+def get_role(user):
+    # prioridad: admin > operator > viewer
+    if user.is_superuser or user.is_staff:
+        return "admin"
+    if user.groups.filter(name="operator").exists():
+        return "operator"
+    if user.groups.filter(name="viewer").exists():
+        return "viewer"
+    return "viewer"
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def auth_me(request):
+    user = request.user
+    return Response({
+        "username": user.username,
+        "role": get_role(user),
+        "is_staff": user.is_staff,
+        "is_superuser": user.is_superuser,
+    })
 
