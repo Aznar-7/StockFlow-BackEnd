@@ -6,11 +6,12 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 
-from .models import Product, StockMovement
+from .models import Product, StockMovement, AuditLog # Importar AuditLog
 from .serializers import (
     ProductSerializer,
     StockMovementSerializer,
     StockMovementReadSerializer,
+    AuditLogSerializer, # Importar Serializer
 )
 
 
@@ -137,4 +138,15 @@ def auth_me(request):
         "is_staff": user.is_staff,
         "is_superuser": user.is_superuser,
     })
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def audit_logs_list(request):
+    # Solo administradores o staff deberían ver esto idealmente
+    if not (request.user.is_staff or request.user.is_superuser):
+         return Response({"error": "No autorizado"}, status=status.HTTP_403_FORBIDDEN)
+
+    logs = AuditLog.objects.select_related('user').order_by("-created_at")
+    serializer = AuditLogSerializer(logs, many=True)
+    return Response(serializer.data)
 

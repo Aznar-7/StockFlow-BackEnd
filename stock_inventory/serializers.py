@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, StockMovement
+from .models import Product, StockMovement, AuditLog
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,3 +19,10 @@ class StockMovementReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = StockMovement
         fields = "__all__"
+
+class AuditLogSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    
+    class Meta:
+        model = AuditLog
+        fields = '__all__'

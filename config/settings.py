@@ -63,6 +63,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    
+    # Agrega nuestro middleware personalizado aquí (después de AuthenticationMiddleware)
+    'stock_inventory.middleware.AuditMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'

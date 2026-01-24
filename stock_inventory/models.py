@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User # Importamos User
 
 # Create your models here.
 
@@ -42,3 +43,23 @@ class StockMovement(models.Model):
 
     def __str__(self):
         return f"{self.movement_type} {self.quantity} - {self.product.sku}"
+
+# --- NUEVO MODELO ---
+class AuditLog(models.Model):
+    ACTION_TYPES = (
+        ("CREATE", "Creación"),
+        ("UPDATE", "Actualización"),
+        ("DELETE", "Eliminación"),
+        ("LOGIN", "Inicio de Sesión"),
+        ("EXPORT", "Exportación"),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=20, choices=ACTION_TYPES)
+    model_name = models.CharField(max_length=50)
+    description = models.TextField()
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.action} - {self.model_name} - {self.user}"
